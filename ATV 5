@@ -1,0 +1,39 @@
+CREATE TABLE IF NOT EXISTS vendedores (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS vendas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    vendedor_id INT NOT NULL,
+    valor_venda DECIMAL(10,2) NOT NULL,
+    FOREIGN KEY (vendedor_id) REFERENCES vendedores(id)
+);
+
+TRUNCATE TABLE vendas;
+SET FOREIGN_KEY_CHECKS = 0;
+TRUNCATE TABLE vendedores;
+SET FOREIGN_KEY_CHECKS = 1;
+
+INSERT INTO vendedores (id, nome) VALUES 
+(1, 'André Souz'),
+(2, 'Camila Ribeiro'),
+(3, 'Felipe Ramos');
+
+INSERT INTO vendas (vendedor_id, valor_venda) VALUES 
+(1, 1500.00), (1, 2300.50), (1, 800.00), (1, 3100.00),
+(2, 4200.00), (2, 1900.00), (2, 5500.00),
+(3, 950.00), (3, 1200.00), (3, 2700.00);
+
+CREATE OR REPLACE VIEW vw_desempenho_vendedores AS
+SELECT 
+    v.nome AS nome_vendedor,
+    COUNT(vd.id) AS quantidade_vendas,
+    SUM(vd.valor_venda) AS valor_total_vendido,
+    AVG(vd.valor_venda) AS valor_medio_vendas,
+    MAX(vd.valor_venda) AS maior_venda_realizada
+FROM vendedores v
+LEFT JOIN vendas vd ON v.id = vd.vendedor_id
+GROUP BY v.id, v.nome;
+
+SELECT * FROM vw_desempenho_vendedores;
