@@ -1,0 +1,24 @@
+CREATE TABLE IF NOT EXISTS produtos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    preco DECIMAL(10,2) NOT NULL,
+    estoque INT NOT NULL
+);
+
+TRUNCATE TABLE produtos;
+INSERT INTO produtos (nome, preco, estoque) VALUES 
+('Notebook', 3500.00, 10),
+('Smartphone', 1800.00, 25),
+('Monitor 24', 950.00, 15),
+('Teclado Mecânico', 250.00, 40),
+('Mouse Gamer', 180.00, 50);
+
+CREATE OR REPLACE VIEW vw_valor_estoque AS
+SELECT 
+    nome AS nome_produto,
+    preco AS preco_unitario,
+    estoque AS quantidade_estoque,
+    (preco * estoque) AS valor_total
+FROM produtos;
+
+SELECT * FROM vw_valor_estoque;
