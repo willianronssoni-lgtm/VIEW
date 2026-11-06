@@ -1,1 +1,42 @@
+CREATE TABLE IF NOT EXISTS clientes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS pedidos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    cliente_id INT NOT NULL,
+    valor_pedido DECIMAL(10,2) NOT NULL,
+    FOREIGN KEY (cliente_id) REFERENCES clientes(id)
+);
+
+TRUNCATE TABLE pedidos;
+SET FOREIGN_KEY_CHECKS = 0;
+TRUNCATE TABLE clientes;
+SET FOREIGN_KEY_CHECKS = 1;
+
+INSERT INTO clientes (id, nome) VALUES 
+(1, 'Ana Silva'),
+(2, 'Carlos Oliveira'),
+(3, 'Beatriz Santos'),
+(4, 'Ricardo Lima'),
+(5, 'Mariana Costa');
+
+INSERT INTO pedidos (cliente_id, valor_pedido) VALUES 
+(1, 150.00), (1, 200.00), (1, 50.00),
+(2, 300.00), (2, 120.50),
+(3, 450.00),
+(4, 90.00), (4, 110.00),
+(5, 500.00), (5, 250.00);
+
+CREATE OR REPLACE VIEW vw_total_clientes AS
+SELECT 
+    c.nome AS nome_cliente,
+    COUNT(p.id) AS quantidade_pedidos,
+    SUM(p.valor_pedido) AS valor_total_gasto
+FROM clientes c
+LEFT JOIN pedidos p ON c.id = p.cliente_id
+GROUP BY c.id, c.nome;
+
+SELECT * FROM vw_total_clientes;
 
